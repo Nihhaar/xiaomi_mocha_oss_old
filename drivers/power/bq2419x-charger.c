@@ -21,6 +21,7 @@
  * 02111-1307, USA
  */
 #include <linux/delay.h>
+#include <linux/debugfs.h>
 #include <linux/err.h>
 #include <linux/i2c.h>
 #include <linux/init.h>
@@ -109,6 +110,7 @@ struct bq2419x_chip {
 	struct bq2419x_reg_info		chg_voltage_control;
 	struct bq2419x_vbus_platform_data *vbus_pdata;
 	struct bq2419x_charger_platform_data *charger_pdata;
+	struct dentry			*dentry;
 };
 
 static int current_to_reg(const unsigned int *tbl,
@@ -1323,6 +1325,36 @@ vbus_node:
 	return pdata;
 }
 
+static int bq2419x_debugfs_show(struct seq_file *s, void *unused)
+{
+	struct bq2419x_chip *bq2419x = s->private;
+	int ret;
+	u8 reg;
+	unsigned int data;
+
+	for (reg = BQ2419X_INPUT_SRC_REG; reg <= BQ2419X_REVISION_REG; reg++) {
+		ret = regmap_read(bq2419x->regmap, reg, &data);
+	if (ret < 0)
+		dev_err(bq2419x->dev, "reg %u read failed %d", reg, ret);
+	else
+		seq_printf(s, "0x%02x:\t0x%02x\n", reg, data);
+	}
+
+	return 0;
+}
+
+static int bq2419x_debugfs_open(struct inode *inode, struct file *file)
+{
+	return single_open(file, bq2419x_debugfs_show, inode->i_private);
+}
+
+static const struct file_operations bq2419x_debugfs_fops = {
+	.open		= bq2419x_debugfs_open,
+	.read		= seq_read,
+	.llseek		= seq_lseek,
+	.release	= single_release,
+};
+
 static int bq2419x_probe(struct i2c_client *client,
 				const struct i2c_device_id *id)
 {
@@ -1467,6 +1499,8 @@ skip_bcharger_init:
 	if (ret < 0)
 		goto scrub_wq;
 
+	bq2419x->dentry = debugfs_create_file("bq2419x-regs", S_IRUSR, NULL,
+					      bq2419x, &bq2419x_debugfs_fops);
 	return 0;
 scrub_wq:
 	if (pdata->bcharger_pdata) {
@@ -1482,6 +1516,9 @@ static int bq2419x_remove(struct i2c_client *client)
 {
 	struct bq2419x_chip *bq2419x = i2c_get_clientdata(client);
 
+	debugfs_remove(bq2419x->dentry);
+	if (bq2419x->irq)
+		free_irq(bq2419x->irq, bq2419x);
 	if (bq2419x->battery_presense) {
 		battery_charger_unregister(bq2419x->bc_dev);
 		cancel_delayed_work(&bq2419x->wdt_restart_wq);
