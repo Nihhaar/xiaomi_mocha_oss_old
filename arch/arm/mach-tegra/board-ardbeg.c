@@ -1494,10 +1494,6 @@ static void __init tegra_ardbeg_late_init(void)
 	ardbeg_sysedp_batmon_init();
 }
 
-static void __init ardbeg_ramconsole_reserve(unsigned long size)
-{
-	tegra_reserve_ramoops_memory(size);
-}
 static void __init tegra_ardbeg_init_early(void)
 {
 	ardbeg_rail_alignment_init();
@@ -1528,7 +1524,6 @@ static void __init tegra_ardbeg_reserve(void)
 #else
 	tegra_reserve(SZ_1G, SZ_16M + SZ_2M, SZ_4M);
 #endif
-	ardbeg_ramconsole_reserve(SZ_2M);
 }
 
 static const char * const ardbeg_dt_board_compat[] = {
