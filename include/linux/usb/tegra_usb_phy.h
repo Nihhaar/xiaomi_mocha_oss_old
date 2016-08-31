@@ -102,6 +102,8 @@ bool tegra_usb_phy_charger_detected(struct tegra_usb_phy *phy);
 bool tegra_usb_phy_qc2_charger_detected(struct tegra_usb_phy *phy,
 		int max_voltage);
 
+bool tegra_usb_phy_cdp_charger_detected(struct tegra_usb_phy *phy);
+
 /**
  * Indicates whether nvidia proprietary charger is connected or not
  * if nvidia proprietary charger is detected then returns true else false
