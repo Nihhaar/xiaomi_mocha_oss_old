@@ -1,7 +1,8 @@
 /*
- * drivers/misc/tegra-profiler/auth.h
+ * drivers/misc/tegra-profiler/arm_pmu.h
  *
  * Copyright (c) 2014, NVIDIA CORPORATION.  All rights reserved.
+ * Copyright (C) 2016 XiaoMi, Inc.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -14,15 +15,30 @@
  *
  */
 
-#ifndef __QUADD_AUTH_H__
-#define __QUADD_AUTH_H__
+#ifndef __ARM_PMU_H
+#define __ARM_PMU_H
 
-struct quadd_ctx;
+#include <linux/list.h>
 
-int quadd_auth_is_debuggable(const char *package_name);
-int quadd_auth_is_auth_open(void);
+#define QUADD_MAX_PMU_COUNTERS	32
 
-int quadd_auth_init(struct quadd_ctx *quadd_ctx);
-void quadd_auth_deinit(void);
+struct quadd_pmu_event_info {
+	int quadd_event_id;
+	int hw_value;
 
-#endif	/* __QUADD_AUTH_H__ */
+	struct list_head list;
+};
+
+struct quadd_pmu_ctx {
+	int arch;
+	char arch_name[64];
+
+	u32 counters_mask;
+
+	struct list_head used_events;
+
+	int l1_cache_rw;
+	unsigned int *current_map;
+};
+
+#endif	/* __ARM_PMU_H */
