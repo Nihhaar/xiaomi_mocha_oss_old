@@ -3,6 +3,7 @@
  *
  * Copyright 2011 Texas Instruments
  * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
+ * Copyright (C) 2016 XiaoMi, Inc.
  *
  * Author: Graeme Gregory <gg@slimlogic.co.uk>
  * Author: Laxman Dewangan <ldewangan@nvidia.com>
@@ -32,6 +33,7 @@ struct palmas_gpio {
 	struct gpio_chip gpio_chip;
 	struct palmas *palmas;
 };
+static struct palmas_gpio *tps65910_gpio;
 
 static struct palmas_gpio *tps65910_gpio;
 
