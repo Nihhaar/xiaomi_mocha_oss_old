@@ -21,6 +21,7 @@
  *
  *  Requeue-PI support by Darren Hart <dvhltc@us.ibm.com>
  *  Copyright (C) IBM Corporation, 2009
+ *  Copyright (C) 2016 XiaoMi, Inc.
  *  Thanks to Thomas Gleixner for conceptual design and careful reviews.
  *
  *  Thanks to Ben LaHaise for yelling "hashed waitqueues" loudly

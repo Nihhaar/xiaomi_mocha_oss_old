@@ -4,6 +4,7 @@
  *  Copyright(C) 2005-2006, Thomas Gleixner <tglx@linutronix.de>
  *  Copyright(C) 2005-2007, Red Hat, Inc., Ingo Molnar
  *  Copyright(C) 2006-2007  Timesys Corp., Thomas Gleixner
+ *  Copyright (C) 2016 XiaoMi, Inc.
  *
  *  No idle tick implementation for low and high resolution timers
  *
