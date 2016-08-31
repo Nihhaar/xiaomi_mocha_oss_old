@@ -591,7 +591,7 @@ static int tegra12x_disp_unpowergate(int id)
 
 	if (id == TEGRA_POWERGATE_DISA)
 		atomic_inc(&ref_count_dispa);
-	else if (id == TEGRA_POWERGATE_DISB) {
+	else if (id == TEGRA_POWERGATE_DISB)
 		atomic_inc(&ref_count_dispb);
 		ret = tegra12x_unpowergate(TEGRA_POWERGATE_DISB);
 	}

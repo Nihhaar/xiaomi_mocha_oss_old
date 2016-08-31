@@ -1262,6 +1262,9 @@ static int t12x_set_disp_la(enum tegra_la_id id,
 	if ((la_to_set < (long long)t12x_min_la(&disp_params)) || (la_to_set > 255))
 		return -1;
 
+	if (la_to_set < t12x_min_la(&disp_params))
+		return -EPERM;
+
 	program_la(ci, la_to_set);
 	return 0;
 }

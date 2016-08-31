@@ -8,6 +8,7 @@
  *	Based on arch/arm/plat-omap/cpu-omap.c, (C) 2005 Nokia Corporation
  *
  * Copyright (C) 2010-2013 NVIDIA CORPORATION. All rights reserved.
+ * Copyright (C) 2016 XiaoMi, Inc.
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
@@ -688,7 +689,7 @@ int tegra_update_cpu_speed(unsigned long rate)
 	for_each_online_cpu(freqs.cpu)
 		cpufreq_notify_transition(&freqs, CPUFREQ_POSTCHANGE);
 
-	if (freqs.old > freqs.new)
+	if (freqs.old > freqs.new) {
 		clk_set_rate(emc_clk, tegra_emc_to_cpu_ratio(freqs.new));
 		tegra_update_mselect_rate(freqs.new);
 _out:
@@ -696,6 +697,7 @@ _out:
 	if ((mode_limit >= freqs.new) && (reg_mode != mode))
 		if (!tegra_dvfs_rail_set_mode(tegra_cpu_rail, mode))
 			reg_mode = mode;
+	}
 
 	return 0;
 }
@@ -906,7 +908,10 @@ static int tegra_cpu_init(struct cpufreq_policy *policy)
 		clk_put(cpu_clk);
 		return PTR_ERR(emc_clk);
 	}
+<<<<<<< a9b32f74432a23a77a25a2bb7f13848302071eb1
 
+=======
+>>>>>>> Kernel: Xiaomi kernel changes for MI PAD
 	clk_prepare_enable(emc_clk);
 	clk_prepare_enable(cpu_clk);
 
@@ -936,7 +941,11 @@ static int tegra_cpu_init(struct cpufreq_policy *policy)
 static int tegra_cpu_exit(struct cpufreq_policy *policy)
 {
 	cpufreq_frequency_table_cpuinfo(policy, freq_table);
+<<<<<<< a9b32f74432a23a77a25a2bb7f13848302071eb1
 	clk_disable(emc_clk);
+=======
+	clk_disable_unprepare(emc_clk);
+>>>>>>> Kernel: Xiaomi kernel changes for MI PAD
 	clk_put(emc_clk);
 	clk_put(cpu_clk);
 	return 0;

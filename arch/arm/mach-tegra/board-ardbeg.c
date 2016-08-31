@@ -1496,7 +1496,7 @@ static void __init tegra_ardbeg_late_init(void)
 
 static void __init ardbeg_ramconsole_reserve(unsigned long size)
 {
-//	tegra_ram_console_debug_reserve(SZ_1M);
+	tegra_reserve_ramoops_memory(size);
 }
 static void __init tegra_ardbeg_init_early(void)
 {

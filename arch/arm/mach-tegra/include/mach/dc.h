@@ -7,6 +7,7 @@
  *	Erik Gilling <konkers@google.com>
  *
  * Copyright (c) 2010-2014, NVIDIA CORPORATION, All rights reserved.
+ * Copyright (C) 2016 XiaoMi, Inc.
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
@@ -145,7 +146,7 @@ struct tegra_dsi_cmd {
 #define DSI_TURN_ON_PERIPH			0x32	/* short */
 /* Generic Read/Write */
 #define DSI_GENERIC_SHORT_WRITE_0_PARAM		0x03	/* short */
-#define DSI_GENERIC_SHORT_WRITE_1_PARAMS	0x13	/* short */
+#define DSI_GENERIC_SHORT_WRITE_1_PARAM		0x13	/* short */
 #define DSI_GENERIC_SHORT_WRITE_2_PARAMS	0x23	/* short */
 #define DSI_GENERIC_READ_0_PARAMS		0x04	/* short */
 #define DSI_GENERIC_READ_1_PARAM		0x14	/* short */
@@ -239,6 +240,14 @@ struct tegra_dsi_cmd {
 			_DSI_CMD_SHORT(di, p0, p1, TEGRA_DSI_LINK0,\
 				TEGRA_DSI_PACKET_VIDEO_VBLANK_CMD)
 
+#define DSI_CMD_VBLANK_SHORT_LINK(di, p0, p1, lnk_id) \
+			_DSI_CMD_SHORT(di, p0, p1, lnk_id,\
+				TEGRA_DSI_PACKET_VIDEO_VBLANK_CMD)
+
+#define DSI_CMD_VBLANK_SHORT_BOTH(di, p0, p1)	\
+		DSI_CMD_VBLANK_SHORT_LINK(di, p0, p1, TEGRA_DSI_LINK0), \
+		DSI_CMD_VBLANK_SHORT_LINK(di, p0, p1, TEGRA_DSI_LINK1)
+
 #define DSI_CMD_SHORT_LINK(di, p0, p1, lnk_id) \
 			_DSI_CMD_SHORT(di, p0, p1, lnk_id, TEGRA_DSI_PACKET_CMD)
 
@@ -289,6 +298,10 @@ struct tegra_dsi_cmd {
 
 #define DSI_CMD_LONG(di, ptr)	\
 			DSI_CMD_LONG_LINK(di, ptr, TEGRA_DSI_LINK0)
+
+#define DSI_CMD_LONG_BOTH(di, ptr)	\
+		DSI_CMD_LONG_LINK(di, ptr, TEGRA_DSI_LINK0), \
+		DSI_CMD_LONG_LINK(di, ptr, TEGRA_DSI_LINK1)
 
 #define DSI_SEND_FRAME(cnt)	{ \
 			.cmd_type = TEGRA_DSI_SEND_FRAME, \

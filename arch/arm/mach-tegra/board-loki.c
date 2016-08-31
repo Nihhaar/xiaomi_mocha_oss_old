@@ -808,7 +808,7 @@ static void __init tegra_loki_late_init(void)
 
 static void __init loki_ramconsole_reserve(unsigned long size)
 {
-//	tegra_ram_console_debug_reserve(SZ_1M);
+	tegra_reserve_ramoops_memory(SZ_1M);
 }
 
 static void __init tegra_loki_dt_init(void)

@@ -2,6 +2,7 @@
  * arch/arm/mach-tegra/tegra12_dvfs.c
  *
  * Copyright (c) 2012-2014 NVIDIA CORPORATION. All rights reserved.
+ * Copyright (C) 2016 XiaoMi, Inc.
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
@@ -130,7 +131,7 @@ static struct dvfs_rail tegra12_dvfs_rail_vdd_gpu = {
 	.stats = {
 		.bin_uV = 10000, /* 10mV */
 	},
-	.version = "P4.40",
+	.version = "P4v40",
 };
 
 static struct dvfs_rail *tegra12_dvfs_rails[] = {

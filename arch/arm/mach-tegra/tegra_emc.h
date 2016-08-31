@@ -2,6 +2,7 @@
  * arch/arm/mach-tegra/tegra_emc.h
  *
  * Copyright (c) 2013, NVIDIA CORPORATION.  All rights reserved.
+ * Copyright (C) 2016 XiaoMi, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +47,7 @@ enum emc_user_id {
 	EMC_USER_ISP1,
 	EMC_USER_AUDIO,
 	EMC_USER_ISP2,
+	EMC_USER_AUDIO,
 	EMC_USER_NUM,
 };
 

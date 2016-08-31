@@ -2,6 +2,7 @@
  * arch/arm/mach-tegra/tegra_simon.h
  *
  * Copyright (c) 2013-2014, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (C) 2016 XiaoMi, Inc.
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and

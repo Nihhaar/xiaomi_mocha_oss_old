@@ -2,6 +2,7 @@
  * arch/arm/mach-tegra/tegra12_clocks.c
  *
  * Copyright (C) 2011-2014 NVIDIA Corporation. All rights reserved.
+ * Copyright (C) 2016 XiaoMi, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -618,6 +619,7 @@ static unsigned long tegra12_clk_shared_bus_update(struct clk *bus,
 	struct clk **bus_top, struct clk **bus_slow, unsigned long *rate_cap);
 static unsigned long tegra12_clk_cap_shared_bus(struct clk *bus,
 	unsigned long rate, unsigned long ceiling);
+static void tegra12_dfll_cpu_late_init(struct clk *c);
 
 static void tegra12_dfll_cpu_late_init(struct clk *c);
 static bool detach_shared_bus;
@@ -8507,6 +8509,7 @@ static void __init tegra12_dfll_cpu_late_init(struct clk *c)
 	ret = tegra_init_cl_dvfs();
 	if (!ret) {
 		c->state = OFF;
+		c->u.dfll.cl_dvfs = platform_get_drvdata(&tegra_cl_dvfs_device);
 		if (tegra_platform_is_silicon()) {
 			use_dfll = CONFIG_TEGRA_USE_DFLL_RANGE;
 #ifdef CONFIG_ARCH_TEGRA_13x_SOC
@@ -8843,12 +8846,6 @@ struct tegra_cpufreq_table_data *tegra_cpufreq_table_get(void)
 
 unsigned long tegra_emc_to_cpu_ratio(unsigned long cpu_rate)
 {
-	static unsigned long emc_max_rate;
-
-	if (emc_max_rate == 0)
-		emc_max_rate = clk_round_rate(
-			tegra_get_clock_by_name("emc"), ULONG_MAX);
-
 	/* Vote on memory bus frequency based on cpu frequency;
 	   cpu rate is in kHz, emc rate is in Hz */
 	if (cpu_rate >= 1300000)
