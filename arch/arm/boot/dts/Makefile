@@ -182,6 +182,10 @@ dtb-$(CONFIG_ARCH_SUNXI) += \
 	sun4i-a10-mini-xplus.dtb \
 	sun4i-a10-hackberry.dtb \
 	sun5i-a13-olinuxino.dtb
+
+ifeq ($(CONFIG_MACH_XIAOMI_MOCHA),y)
+dtb-$(CONFIG_ARCH_TEGRA) = tegra124-mocha.dtb
+else
 dtb-$(CONFIG_ARCH_TEGRA) += tegra20-harmony.dtb \
 	tegra20-iris-512.dtb \
 	tegra20-medcom-wide.dtb \
@@ -232,6 +236,8 @@ dtb-$(CONFIG_ARCH_TEGRA) += tegra20-harmony.dtb \
 	tegra124-e1923.dtb \
 	tegra124-ardbeg_sata.dtb \
 	tegra124-vcm30_t124.dtb
+endif
+
 dtb-$(CONFIG_ARCH_VERSATILE) += versatile-ab.dtb \
 	versatile-pb.dtb
 dtb-$(CONFIG_ARCH_VEXPRESS) += vexpress-v2p-ca5s.dtb \
