@@ -1,0 +1,24 @@
+# Xiaomi configuration options
+
+config MACH_XIAOMI
+	bool "XIAOMI device"
+	depends on ARCH_TEGRA
+	help
+	  Support for Xiaomi products
+
+config MACH_XIAOMI_TEGRA124
+	bool "XIAOMI TEGRA124"
+	depends on ARCH_TEGRA_12x_SOC
+	select MACH_XIAOMI
+	help
+	  Support for TEGRA124 Xiaomi variants
+
+menu "Xiaomi board selection"
+
+	config MACH_XIAOMI_MOCHA
+		bool "XIAOMI_MOCHA board"
+		select MACH_XIAOMI_TEGRA124
+		help
+		  Support for Xiaomi Mi Pad variant
+
+endmenu
