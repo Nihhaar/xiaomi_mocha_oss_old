@@ -570,6 +570,14 @@ static struct tegra_dp_out dp_settings = {
 	.n_lt_settings = ARRAY_SIZE(ardbeg_edp_lt_data),
 };
 
+u8 x6_panel_id = 0;
+static int __init setup_panel_id(char *str)
+{
+	x6_panel_id = simple_strtoul(str, NULL, 0);
+	return 1;
+}
+__setup("panel_id=", setup_panel_id);
+
 #ifndef CONFIG_TEGRA_HDMI_PRIMARY
 /* can be called multiple times */
 static struct tegra_panel *ardbeg_panel_configure(struct board_info *board_out,
@@ -635,19 +643,25 @@ static struct tegra_panel *ardbeg_panel_configure(struct board_info *board_out,
 		tegra_io_dpd_enable(&dsid_io);
 		break;
 	default:
-		panel = &dsi_p_wuxga_10_1;
-		tegra_io_dpd_enable(&dsic_io);
-		tegra_io_dpd_enable(&dsid_io);
-		break;
+		if ((x6_panel_id & 0xF0) == 0x20) {
+			panel = &dsi_s_wqxga_7_9_x6;
+			dsi_instance = DSI_INSTANCE_0;
+		} else if ((x6_panel_id & 0xF0) == 0x10) {
+			panel = &dsi_a_wqxga_7_9_x6;
+			dsi_instance = DSI_INSTANCE_0;
+		} else {
+			pr_err("!!! --- panel: error panel id 0x%x --- !!!", x6_panel_id);
+		}
 	}
 	if (dsi_instance_out)
 		*dsi_instance_out = dsi_instance;
 	return panel;
 }
 
+static struct tegra_panel *panel;
+
 static void ardbeg_panel_select(void)
 {
-	struct tegra_panel *panel = NULL;
 	struct board_info board;
 	struct board_info mainboard;
 	u8 dsi_instance;
@@ -707,6 +721,21 @@ static void ardbeg_panel_select(void)
 	}
 
 }
+
+void fs_panel_set_param(unsigned int param)
+{
+	if (panel == NULL)
+		pr_err("panel: error in %s(): panel point is NULL ! \n", __func__);
+	else {
+		if (panel->set_dispparam)
+			panel->set_dispparam(param);
+		else
+			pr_err("panel: error in %s(): panel->set_dispparam() point is NULL ! \n", __func__);
+	}
+	return;
+}
+EXPORT_SYMBOL(fs_panel_set_param);
+
 #endif
 
 int __init ardbeg_panel_init(void)

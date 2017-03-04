@@ -28,6 +28,7 @@ struct tegra_panel {
 	void (*init_fb_data)(struct tegra_fb_data *);
 	void (*init_cmu_data)(struct tegra_dc_platform_data *);
 	void (*set_disp_device)(struct platform_device *);
+	void (*set_dispparam) (unsigned int);
 	int (*register_bl_dev)(void);
 	int (*register_i2c_bridge)(void);
 };
@@ -71,6 +72,8 @@ extern struct tegra_panel dsi_lgd_wxga_7_0;
 extern struct tegra_panel dsi_a_1080p_14_0;
 extern struct tegra_panel edp_a_1080p_14_0;
 extern struct tegra_panel edp_s_wqxgap_15_6;
+extern struct tegra_panel dsi_s_wqxga_7_9_x6;
+extern struct tegra_panel dsi_a_wqxga_7_9_x6;
 extern struct tegra_panel edp_s_uhdtv_15_6;
 extern struct tegra_panel lvds_c_1366_14;
 extern struct tegra_panel dsi_l_720p_5_loki;
