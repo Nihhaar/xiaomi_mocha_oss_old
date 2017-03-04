@@ -1283,6 +1283,42 @@ int tegra_pinctrl_pg_set_func(const struct tegra_pingroup_config *config)
 }
 EXPORT_SYMBOL(tegra_pinctrl_pg_set_func);
 
+static int tegra_pinctrl_pg_set_func_dt(const struct tegra_pingroup_config *config)
+{
+	int ret;
+	int pg = config->pingroup;
+	const struct tegra_pingroup *g;
+	int func_dt = config->func;
+
+	if (!pmx) {
+		pr_err("Pingroup not registered yet\n");
+		return -EPROBE_DEFER;
+	}
+
+	if (pg < 0 || pg >=  pmx->soc->ngroups)
+		return -ERANGE;
+
+	g = &pmx->soc->groups[pg];
+
+	if (g->mux_reg < 0)
+		return -EINVAL;
+
+	ret = tegra_pinctrl_enable(pmx->pctl, func_dt, pg);
+	if (ret < 0) {
+		pr_err("Not able to set function %s for pin group %s\n",
+			tegra_pinctrl_function_name(func_dt), g->name);
+		return ret;
+	}
+
+	ret = tegra_pinctrl_pg_set_io(pg, config->io);
+	if (ret < 0) {
+		pr_err("Not able to set io %s for pin group %s\n",
+			tegra_pinctrl_io_name(config->io), g->name);
+		return ret;
+	}
+	return 0;
+}
+
 int tegra_pinctrl_pg_get_func(int pg)
 {
 	int mux;
@@ -1967,7 +2003,94 @@ static int dbg_pinmux_open(struct inode *inode, struct file *file)
  *	to tegra_pinmux
  * ex) # echo "HDMI_CEC CEC OUTPUT NORMAL TRISTATE" > /d/tegra_pinmux
  */
-#define DELIMITER "\n"
+#define FIELD_DELIMITER	" "
+#define LINE_DELIMITER	"\n"
+
+int do_pinmux_setting(char *buf)
+{
+	char *pbuf = &buf[0];
+	char *token;
+	struct tegra_pingroup_config pg_config;
+	int i;
+
+	pr_debug("%s buf: %s\n", __func__, buf);
+
+	/* ping group index by name */
+	token = strsep(&pbuf, LINE_DELIMITER);
+	for (i = 0; i < pmx->soc->ngroups; i++)
+		if (!strcmp(token, pmx->soc->groups[i].name))
+			break;
+	if (i == pmx->soc->ngroups) { /* no pingroup matched with name */
+		pr_err("no pingroup matched with name\n");
+		return -EINVAL;
+	}
+	pg_config.pingroup = i;
+
+	/* func index by name */
+	token = strsep(&pbuf, LINE_DELIMITER);
+	for (i = 0; i < TEGRA_MAX_MUX; i++)
+		if (!strcmp(token, tegra_pinctrl_function_name(i)))
+			break;
+	if (i == TEGRA_MAX_MUX) { /* no func matched with name */
+		pr_err("no func matched with name\n");
+		return -EINVAL;
+	}
+	pg_config.func = i;
+
+	/* i/o by name */
+	token = strsep(&pbuf, LINE_DELIMITER);
+	i = !strcmp(token, "OUTPUT") ? 0 :
+		!strcmp(token, "INPUT") ? 1 : -1;
+	if (i == -1) { /* no IO matched with name */
+		pr_err("no IO matched with name\n");
+		return -EINVAL;
+	}
+	pg_config.io = i;
+
+	/* pull up/down by name */
+	token = strsep(&pbuf, LINE_DELIMITER);
+	i = !strcmp(token, "NORMAL") ? 0 :
+		!strcmp(token, "PULL_DOWN") ? 1 :
+		!strcmp(token, "PULL_UP") ? 2 : -1;
+	if (i == -1) { /* no PUPD matched with  name */
+		pr_err("no PUPD matched with  name\n");
+		return -EINVAL;
+	}
+	pg_config.pupd = i;
+
+	/* tristate by name */
+	token = strsep(&pbuf, LINE_DELIMITER);
+	i = !strcmp(token, "NORMAL") ? 0 :
+		!strcmp(token, "TRISTATE") ? 1 : -1;
+	if (i == -1) { /* no tristate matched with name */
+		pr_err("no tristate matched with name\n");
+		return -EINVAL;
+	}
+	pg_config.tristate = i;
+
+	/* open drain by name */
+	token = strsep(&pbuf, LINE_DELIMITER);
+	i = !strcmp(token, "DEFAULT") ? TEGRA_PIN_OD_DEFAULT :
+		!strcmp(token, "DISABLE") ? TEGRA_PIN_OD_DISABLE :
+		!strcmp(token, "ENABLE") ? TEGRA_PIN_OD_ENABLE : -1;
+	if (i == -1) { /* no OD matched with name */
+		pr_err("no OD matched with name\n");
+		return -EINVAL;
+	}
+	pg_config.od = i;
+
+	pr_debug("pingroup=%d, func=%d, io=%d, pupd=%d, tristate=%d, od=%d\n",
+			pg_config.pingroup, pg_config.func, pg_config.io,
+			pg_config.pupd, pg_config.tristate, pg_config.od);
+	tegra_pinctrl_pg_set_func_dt(&pg_config);
+	tegra_pinctrl_pg_set_pullupdown(pg_config.pingroup, pg_config.pupd);
+	tegra_pinctrl_pg_set_tristate(pg_config.pingroup, pg_config.tristate);
+	tegra_pinctrl_pg_set_od(pg_config.pingroup, pg_config.od);
+
+	return 0;
+}
+EXPORT_SYMBOL(do_pinmux_setting);
+
 static ssize_t dbg_pinmux_write(struct file *file,
 	const char __user *userbuf, size_t count, loff_t *ppos)
 {
@@ -1982,10 +2105,13 @@ static ssize_t dbg_pinmux_write(struct file *file,
 	if (copy_from_user(buf, userbuf, count))
 		return -EFAULT;
 
+	if (do_pinmux_setting(buf) != 0)
+		pr_err("Failed to do pinmux setting!\n");
+
 	pr_debug("%s buf: %s\n", __func__, buf);
 
 	/* ping group index by name */
-	token = strsep(&pbuf, DELIMITER);
+	token = strsep(&pbuf, LINE_DELIMITER);
 	for (i = 0; i < pmx->soc->ngroups; i++)
 		if (!strcmp(token, pmx->soc->groups[i].name))
 			break;
@@ -1996,7 +2122,7 @@ static ssize_t dbg_pinmux_write(struct file *file,
 	pg_config.pingroup = i;
 
 	/* func index by name */
-	token = strsep(&pbuf, DELIMITER);
+	token = strsep(&pbuf, LINE_DELIMITER);
 	for (i = 0; i < TEGRA_MAX_MUX; i++)
 		if (!strcmp(token, tegra_pinctrl_function_name(i)))
 			break;
@@ -2007,7 +2133,7 @@ static ssize_t dbg_pinmux_write(struct file *file,
 	pg_config.func = i;
 
 	/* i/o by name */
-	token = strsep(&pbuf, DELIMITER);
+	token = strsep(&pbuf, LINE_DELIMITER);
 	i = !strcmp(token, "OUTPUT") ? 0 :
 		!strcmp(token, "INPUT") ? 1 : -1;
 	if (i == -1) { /* no IO matched with name */
@@ -2017,7 +2143,7 @@ static ssize_t dbg_pinmux_write(struct file *file,
 	pg_config.io = i;
 
 	/* pull up/down by name */
-	token = strsep(&pbuf, DELIMITER);
+	token = strsep(&pbuf, LINE_DELIMITER);
 	i = !strcmp(token, "NORMAL") ? 0 :
 		!strcmp(token, "PULL_DOWN") ? 1 :
 		!strcmp(token, "PULL_UP") ? 2 : -1;
@@ -2028,7 +2154,7 @@ static ssize_t dbg_pinmux_write(struct file *file,
 	pg_config.pupd = i;
 
 	/* tristate by name */
-	token = strsep(&pbuf, DELIMITER);
+	token = strsep(&pbuf, LINE_DELIMITER);
 	i = !strcmp(token, "NORMAL") ? 0 :
 		!strcmp(token, "TRISTATE") ? 1 : -1;
 	if (i == -1) { /* no tristate matched with name */
