@@ -1,5 +1,6 @@
 #include <dt-bindings/gpio/tegra-gpio.h>
 #include <dt-bindings/input/input.h>
+#include <dt-bindings/clock/tegra124-car.h>
 #include <dt-bindings/interrupt-controller/arm-gic.h>
 
 /include/ "tegra124-soc.dtsi"
@@ -160,4 +161,9 @@
 		status = "okay";
 	};
 
+	tegra_car: clock {
+		compatible = "nvidia,tegra124-car";
+		reg = <0x60006000 0x1000>;
+		#clock-cells = <1>;
+	};
 };
