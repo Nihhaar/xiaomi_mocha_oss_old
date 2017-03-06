@@ -36,10 +36,8 @@
 #define TEGRA124_CLK_PWM 17
 #define TEGRA124_CLK_I2S2 18
 /* 20 (register bit affects vi and vi_sensor) */
-#define TEGRA124_CLK_GR_2D 21
 #define TEGRA124_CLK_USBD 22
 #define TEGRA124_CLK_ISP 23
-#define TEGRA124_CLK_GR_3D 24
 /* 25 */
 #define TEGRA124_CLK_DISP2 26
 #define TEGRA124_CLK_DISP1 27
