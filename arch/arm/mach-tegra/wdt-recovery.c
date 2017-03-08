@@ -38,7 +38,7 @@
 
 static int wdt_heartbeat = 30;
 
-#if defined(CONFIG_ARCH_TEGRA_3x_SOC)
+#if defined(CONFIG_ARCH_TEGRA_3x_SOC) || defined(CONFIG_ARCH_TEGRA_12x_SOC)
 #define TIMER_PTV			0
  #define TIMER_EN			(1 << 31)
  #define TIMER_PERIODIC			(1 << 30)
