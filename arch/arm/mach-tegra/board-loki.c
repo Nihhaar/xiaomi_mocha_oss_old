@@ -793,9 +793,6 @@ static void __init tegra_loki_late_init(void)
 	loki_panel_init();
 	loki_kbc_init();
 	loki_pmon_init();
-#ifdef CONFIG_TEGRA_WDT_RECOVERY
-	tegra_wdt_recovery_init();
-#endif
 	tegra_serial_debug_init(TEGRA_UARTD_BASE, INT_WDT_CPU, NULL, -1, -1);
 
 	loki_sensors_init();
@@ -811,7 +808,7 @@ static void __init tegra_loki_late_init(void)
 
 static void __init loki_ramconsole_reserve(unsigned long size)
 {
-	tegra_ram_console_debug_reserve(SZ_1M);
+//	tegra_ram_console_debug_reserve(SZ_1M);
 }
 
 static void __init tegra_loki_dt_init(void)

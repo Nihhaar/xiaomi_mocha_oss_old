@@ -1220,10 +1220,6 @@ static void __init tegra_ardbeg_late_init(void)
 		tegra_io_dpd_enable(&pexclk2_io);
 	}
 
-#ifdef CONFIG_TEGRA_WDT_RECOVERY
-	tegra_wdt_recovery_init();
-#endif
-
 	ardbeg_sensors_init();
 
 	ardbeg_soctherm_init();
@@ -1237,7 +1233,7 @@ static void __init tegra_ardbeg_late_init(void)
 
 static void __init ardbeg_ramconsole_reserve(unsigned long size)
 {
-	tegra_ram_console_debug_reserve(SZ_1M);
+//	tegra_ram_console_debug_reserve(SZ_1M);
 }
 
 static void __init tegra_ardbeg_init_early(void)
