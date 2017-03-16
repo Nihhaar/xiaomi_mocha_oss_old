@@ -8064,6 +8064,7 @@ struct clk tegra_list_clks[] = {
 	SHARED_SCLK("sbc6.sclk", "tegra12-spi.5",	"sclk", &tegra_clk_apb,        NULL, 0, 0),
 
 	SHARED_EMC_CLK("avp.emc",	"tegra-avp",	"emc",	&tegra_clk_emc, NULL, 0, 0, 0),
+	SHARED_EMC_CLK("cpu.emc",       "cpu",          "emc",  &tegra_clk_emc, NULL, 0, 0, 0),
 	SHARED_EMC_CLK("mon_cpu.emc", "tegra_mon", "cpu_emc",
 						&tegra_clk_emc, NULL, 0, 0, 0),
 	SHARED_EMC_CLK("disp1.emc",	"tegradc.0",	"emc",	&tegra_clk_emc, NULL, 0, SHARED_ISO_BW, BIT(EMC_USER_DC1)),
@@ -8088,6 +8089,7 @@ struct clk tegra_list_clks[] = {
 	SHARED_EMC_CLK("vib.emc",	"tegra_vi.1",	"emc",	&tegra_clk_emc, NULL, 0, SHARED_ISO_BW,	BIT(EMC_USER_VI2)),
 	SHARED_EMC_CLK("ispa.emc",	"tegra_isp.0",	"emc",	&tegra_clk_emc, NULL, 0, SHARED_ISO_BW,	BIT(EMC_USER_ISP1)),
 	SHARED_EMC_CLK("ispb.emc",	"tegra_isp.1",	"emc",	&tegra_clk_emc, NULL, 0, SHARED_ISO_BW,	BIT(EMC_USER_ISP2)),
+	SHARED_EMC_CLK("audio.emc",	"audio",	"emc",	&tegra_clk_emc, NULL, 0, SHARED_ISO_BW, BIT(EMC_USER_AUDIO)),
 	SHARED_EMC_CLK("iso.emc",	"iso",		"emc",	&tegra_clk_emc, NULL, 0, 0, 0),
 	SHARED_EMC_CLK("override.emc", "override.emc",	NULL,	&tegra_clk_emc, NULL, 0, SHARED_OVERRIDE, 0),
 	SHARED_EMC_CLK("vic.emc",	"tegra_vic03.0",	"emc",  &tegra_clk_emc, NULL, 0, 0, 0),
