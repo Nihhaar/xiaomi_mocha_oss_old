@@ -238,8 +238,11 @@ enum ext_slave_id {
 	COMPASS_ID_MMC314X,
 	COMPASS_ID_HSCDTD002B,
 	COMPASS_ID_HSCDTD004A,
+	COMPASS_ID_MLX90399,
+	COMPASS_ID_AK09911,
 
-	PRESSURE_ID_BMA085,
+	PRESSURE_ID_BMP085,
+	PRESSURE_ID_BMP280,
 };
 
 #define INV_PROD_KEY(ver, rev) (ver * 100 + rev)
@@ -369,6 +372,9 @@ struct ext_slave_descr {
 #define NVI_CONFIG_BOOT_HOST		(2) /* connected to host */
 #define NVI_CONFIG_BOOT_MASK		(0x03)
 
+#define REGULATOR_CONFIG_ANA	(0x01)
+#define REGULATOR_CONFIG_I2C	(0x02)
+
 /**
  * struct mpu_platform_data - Platform data for the mpu driver
  * @int_config:		Bits [7:3] of the int config register.
@@ -378,8 +384,8 @@ struct ext_slave_descr {
  * @sec_slave_id:       id of the secondary slave device
  * @secondary_i2c_address: secondary device's i2c address
  * @secondary_orientation: secondary device's orientation matrix
- * @config: the selection determines the device behavior.
- *          Select from the NVI_CONFIG_BOOT_ defines.
+ * @key:                key for MPL library.
+ * @regulator_config:   0: no regulator, Bit0:vdd_ana, Bit1:vdd_i2c
  *
  * Contains platform specific information on how to configure the MPU3050 to
  * work on this platform.  The orientation matricies are 3x3 rotation matricies
@@ -397,7 +403,17 @@ struct mpu_platform_data {
 	__u8 secondary_read_reg;
 	__s8 secondary_orientation[9];
 	__u8 key[16];
-	__u8 config;
+	enum secondary_slave_type aux_slave_type;
+	enum ext_slave_id aux_slave_id;
+	__u16 aux_i2c_addr;
+
+#ifdef CONFIG_DTS_INV_MPU_IIO
+	int (*power_on)(struct mpu_platform_data *);
+	int (*power_off)(struct mpu_platform_data *);
+	struct regulator *vdd_ana;
+	struct regulator *vdd_i2c;
+	__u8 regulator_config;
+#endif
 };
 
 /**
