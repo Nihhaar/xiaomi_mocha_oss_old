@@ -55,6 +55,7 @@ module_param(emc_enable, bool, 0644);
 static int pasr_enable;
 
 u8 tegra_emc_bw_efficiency = 80;
+u32 tegra_emc_cur_rate = 924000;
 
 static u32 bw_calc_freqs[] = {
 	5, 10, 20, 30, 40, 60, 80, 100, 120, 140, 160, 180
@@ -1092,6 +1093,7 @@ int tegra_emc_set_rate(unsigned long rate)
 	spin_unlock_irqrestore(&emc_access_lock, flags);
 
 	emc_last_stats_update(i);
+	tegra_emc_cur_rate = rate;
 
 	pr_debug("%s: rate %lu setting 0x%x\n", __func__, rate, clk_setting);
 
