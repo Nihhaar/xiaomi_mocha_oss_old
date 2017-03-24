@@ -123,6 +123,7 @@
 #ifdef CONFIG_PSTORE_RAM
 #define RAMOOPS_MEM_SIZE SZ_2M
 #define FTRACE_MEM_SIZE SZ_1M
+#define SZ_4G  (1ULL << 32)
 #endif
 
 phys_addr_t tegra_bootloader_fb_start;
