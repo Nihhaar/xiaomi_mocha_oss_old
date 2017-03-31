@@ -908,10 +908,7 @@ static int tegra_cpu_init(struct cpufreq_policy *policy)
 		clk_put(cpu_clk);
 		return PTR_ERR(emc_clk);
 	}
-<<<<<<< a9b32f74432a23a77a25a2bb7f13848302071eb1
 
-=======
->>>>>>> Kernel: Xiaomi kernel changes for MI PAD
 	clk_prepare_enable(emc_clk);
 	clk_prepare_enable(cpu_clk);
 
@@ -941,11 +938,7 @@ static int tegra_cpu_init(struct cpufreq_policy *policy)
 static int tegra_cpu_exit(struct cpufreq_policy *policy)
 {
 	cpufreq_frequency_table_cpuinfo(policy, freq_table);
-<<<<<<< a9b32f74432a23a77a25a2bb7f13848302071eb1
 	clk_disable(emc_clk);
-=======
-	clk_disable_unprepare(emc_clk);
->>>>>>> Kernel: Xiaomi kernel changes for MI PAD
 	clk_put(emc_clk);
 	clk_put(cpu_clk);
 	return 0;
